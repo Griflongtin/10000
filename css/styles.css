@@ -1,0 +1,60 @@
+.row, .col-md-4, .col-md-12 {
+  /*border: solid 1px black;*/
+}
+
+#game {
+  display: none;
+  margin-top: 40px;
+}
+#user {
+  /*display: none;*/
+  width: 50%;
+  margin: auto;
+}
+
+#player-guide {
+  text-align: center;
+  font-size: 34px;
+  margin: 37px 0 37px 0;
+}
+
+#turn-player-name {
+  font-style: italic;
+  font-size: 40px;
+}
+
+#page-header {
+  text-align: center;
+}
+
+.info-guide {
+  text-align: center;
+  border: solid 1px black;
+  font-size: 14pt;
+}
+
+.info {
+  text-align: center;
+  border: solid 1px black;
+}
+
+.die-roll, .turnscore, .playerscore {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+.player {
+  padding: 40px;
+}
+
+h3 {
+  text-align: center;
+  text-decoration: underline;
+  font-size: 20pt;
+  font-style: italic;
+  font-weight: bold;
+}
+
+form {
+  margin-top: 50px;
+}
