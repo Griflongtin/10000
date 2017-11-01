@@ -54,10 +54,18 @@ die.prototype.roll = function() {
 }
 die.prototype.diceRoll = function() {
   var newDiceRoll = [];
+  var outputDiceRoll = [];
   for (var i = 0; i < diceCount; i++) {
     newDiceRoll.push(this.roll());
   }
-  return newDiceRoll;
+  for (var i = 0; i < newDiceRoll.length; i++) {
+    if (newDiceRoll[i] === 1 || newDiceRoll[i] === 5) {
+    outputDiceRoll.push('<span class="die-box clickable git">' + newDiceRoll[i] + '</span>');
+  } else {
+    outputDiceRoll.push('<span class="die-box clickable">' + newDiceRoll[i] + '</span>');
+  }
+  }
+  return outputDiceRoll;
 }
 
 
@@ -111,9 +119,9 @@ $(function() {
         //get a random number 1-6
         var roll = dice.diceRoll();
         alert(roll);
-
         //insert current game info (dice roll/turn score/total score) into the div of the current player (1 or 2)
-        $('#player' + turnPlayer.playerNumber + ' .die-roll').html(roll);
+        $('#dice-output').append(roll);
+
         $('#player' + turnPlayer.playerNumber + ' .turnscore').html(turnPlayer.turnScore);
 
         //if a 1 was rolled, increment the turn count and display the new turn player
@@ -147,6 +155,9 @@ $(function() {
         turnPlayer = whichTurn(player1, player2, turnCount);
         $('#turn-player-name').text(turnPlayer.playerName);
       }
+    });
+    $('.git').click(function() {
+      alert('cool');
     });
   });
 });
