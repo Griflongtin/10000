@@ -12,7 +12,7 @@
       <h1 class="jumbotron" id='page-header'>Pig Dice!</h1>
       <div class="container">
         <div id="user">
-          <form>
+          <form id="user-input-page">
             <div class="form-group">
               <label for="player1name">Player One Name</label>
               <input type="text" class="form-control" id="player1name" placeholder="Name">
@@ -48,11 +48,12 @@
               </div>
             </div>
             <div class="col-md-4">
-              <div class="row">
+              <form class="row">
                 <div class="col-md-4" id="dice-output">
 
                 </div>
-              </div>
+                <button id='dice-submit-button' class="btn btn-info btn-lg btn-block">Submit Dice</button>
+              </form>
               <div class="row">
                 <div class="col-md-12 info">
                   <p>Dice Score</p>
@@ -87,6 +88,7 @@
                 <div class="row">
                   <div class="col-md-12 info">
                     <span class='playerscore'>0</span>
+
                   </div>
                 </div>
               </div>

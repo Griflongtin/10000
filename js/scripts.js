@@ -1,14 +1,15 @@
-//business logic
-//object containing data regarding each player
 var diceCount = 6;
 var diceCountScore = 0;
+function die() {
+  this.sides = [1,2,3,4,5,6];
+}
+
 function Player(name, number) {
   this.playerName = name;
   this.playerScore = 0;
   this.playerNumber = number;
 }
 
-//ends the current Player's turn and adds their turn score to their total score
 Player.prototype.hold = function() {
   this.playerScore += diceCountScore;
 }
@@ -20,68 +21,12 @@ Player.prototype.checkForWin = function() {
   }
   return win;
 }
+//
+// Player.prototype.resetScorePlayer = function() {
+//   this.turnScore = 0;
+//   this.playerScore = 0;
+// }
 
-Player.prototype.resetScore = function() {
-  this.turnScore = 0;
-  this.playerScore = 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//object representing a six-sided die
-function die() {
-  this.sides = [1,2,3,4,5,6];
-}
-
-/* returns a random number from 1-6, simulating the roll of a die.
-   takes a Player object as an argument and manipulates the turnScore key according to the number 'rolled' */
-
-
-die.prototype.roll = function() {
-  var die = this.sides[Math.floor(Math.random() * this.sides.length)];
-  return die;
-}
-die.prototype.diceRoll = function() {
-  var newDiceRoll = [];
-  var outputDiceRoll = [];
-  for (var i = 0; i < diceCount; i++) {
-    newDiceRoll.push(this.roll());
-  }
-  for (var i = 0; i < newDiceRoll.length; i++) {
-    if (newDiceRoll[i] === 1 || newDiceRoll[i] === 5) {
-    outputDiceRoll.push('<span class="die-box clickable git">' + newDiceRoll[i] + '</span>');
-  } else {
-    outputDiceRoll.push('<span class="die-box clickable">' + newDiceRoll[i] + '</span>');
-  }
-  }
-  return outputDiceRoll;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//returns who the turn player is based on how many turns have passed
 var whichTurn = function(player1, player2, turns) {
   if (turns % 2 === 0) {
     return player2;
@@ -90,10 +35,35 @@ var whichTurn = function(player1, player2, turns) {
   }
 }
 
+die.prototype.roll = function() {
+  var dieNumber = this.sides[Math.floor(Math.random() * this.sides.length)];
+  return dieNumber;
+}
 
-//ui logic
+die.prototype.diceRoll = function() {
+  var newDiceRoll = [];
+  for (var i = 0; i < diceCount; i++) {
+    newDiceRoll.push(this.roll());
+  }
+  return newDiceRoll;
+}
+
+die.prototype.resetScoreDie = function() {
+  diceCount = 6;
+  diceCountScore = 0;
+}
+
+die.prototype.testRoll = function(roll) {
+  for (var i = 0; i < roll.length; i++) {
+    if ("15".includes(roll[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 $(function() {
-  $('form').submit(function(event) {
+  $('form#user-input-page').submit(function(event) {
     event.preventDefault();
     var player1Name = $('input#player1name').val(),
         player2Name = $('input#player2name').val(),
@@ -107,34 +77,32 @@ $(function() {
       $('#game').show();
       $("#name1").text(player1Name);
       $('#name2').text(player2Name);
-      //reset the form and display player1 as turn player
+
       $(this).trigger('reset');
       $('#turn-player-name').text(player1Name);
 
 
       $('button#roll-button').click(function() {
-        //determine the turn Player (will be an object),
-        var turnPlayer = whichTurn(player1, player2, turnCount);
-
-        //get a random number 1-6
+        $('#dice-output').empty();
         var roll = dice.diceRoll();
-        alert(roll);
-        //insert current game info (dice roll/turn score/total score) into the div of the current player (1 or 2)
-        $('#dice-output').append(roll);
-
-        $('#player' + turnPlayer.playerNumber + ' .turnscore').html(turnPlayer.turnScore);
-
-        //if a 1 was rolled, increment the turn count and display the new turn player
-        if (turnPlayer.turnScore === 0) {
+        if (dice.testRoll(roll) === false) {
+          $('#dice-output').empty();
+          dice.resetScoreDie();
           turnCount++;
           turnPlayer = whichTurn(player1, player2, turnCount);
           $('#turn-player-name').text(turnPlayer.playerName);
+        } else {
+          $('button#roll-button').hide();
+          $('button#dice-submit-button').show();
+          var turnPlayer = whichTurn(player1, player2, turnCount);
+          for (var i = 0; i < roll.length; i++) {
+            $('#dice-output').append('<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input" id="die-chack-' + i + '" type="checkbox" value="' + roll[i] + '">' + roll[i] + '</input></label></div>');
+          }
         }
       });
     } else {
       alert('Please enter a unique name for each player!');
     }
-
 
     $('button#hold-button').click(function() {
       var turnPlayer = whichTurn(player1, player2, turnCount);
