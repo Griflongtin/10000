@@ -12,7 +12,6 @@ function Player(name, number) {
 }
 
 Player.prototype.hold = function() {
-  debugger
   this.playerScore += diceCountScore;
 }
 
@@ -68,6 +67,11 @@ die.prototype.addChosenDice = function(numbers) {
     }
     this.diceCount += -1;
   }
+  for (var i = 0; i < numbers.length; i++) {
+    if (numbers[i] !== 1 || numbers[i] !== 5) {
+      diceCountScore = 0;
+    }
+  }
   if (this.diceCount === 0) {
     this.diceCount = 6;
   }
@@ -95,20 +99,13 @@ $(function() {
 
       $('button#roll-button').click(function() {
         var roll = dice.diceRoll();
-        if (dice.testRoll(roll) === false) {
-          $('#dice-output').empty();
-          dice.resetScoreDie();
-          $('.dice-count-score').html(diceCountScore);
-          turnCount++;
-          turnPlayer = whichTurn(player1, player2, turnCount);
-          $('#turn-player-name').text(turnPlayer.playerName);
-        } else {
-          $('button#roll-button').hide();
-          $('button#dice-submit-button').show();
-          var turnPlayer = whichTurn(player1, player2, turnCount);
-          for (var i = 0; i < roll.length; i++) {
-            $('#dice-output').append('<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input" name="die-check" type="checkbox" value="' + roll[i] + '">' + roll[i] + '</input></label></div>');
-          }
+        $('button#hold-button').hide();
+        $('#new-dice-button').hide();
+        $('button#roll-button').hide();
+        $('button#dice-submit-button').show();
+        var turnPlayer = whichTurn(player1, player2, turnCount);
+        for (var i = 0; i < roll.length; i++) {
+          $('#dice-output').append('<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input" name="die-check" type="checkbox" value="' + roll[i] + '">' + roll[i] + '</input></label></div>');
         }
       });
     } else {
@@ -122,10 +119,22 @@ $(function() {
         diceChosen.push(parseInt($(this).val()));
       });
       dice.addChosenDice(diceChosen);
+      if (diceChosen.length === 0 || diceCountScore === 0){
+        $('#dice-output').empty();
+        dice.resetScoreDie();
+        $('.dice-count-score').html(diceCountScore);
+        turnCount++;
+        turnPlayer = whichTurn(player1, player2, turnCount);
+        $('#turn-player-name').text(turnPlayer.playerName);
+        $('button#dice-submit-button').hide();
+        $('button#roll-button').show();
+      } else {
       $('.dice-count-score').html(diceCountScore);
       $('#dice-output').empty();
       $('button#roll-button').show();
+        $('button#hold-button').show();
       $('button#dice-submit-button').hide();
+      }
     });
 
     $('button#hold-button').click(function() {
