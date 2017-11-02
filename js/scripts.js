@@ -1,7 +1,8 @@
-var diceCount = 6;
 var diceCountScore = 0;
+
 function die() {
   this.sides = [1,2,3,4,5,6];
+  this.diceCount = 6;
 }
 
 function Player(name, number) {
@@ -11,21 +12,17 @@ function Player(name, number) {
 }
 
 Player.prototype.hold = function() {
+  debugger
   this.playerScore += diceCountScore;
 }
 
 Player.prototype.checkForWin = function() {
   var win = false;
-  if (this.playerScore >= 10000) {
+  if (this.playerScore >= 1000) {
     win = true;
   }
   return win;
 }
-//
-// Player.prototype.resetScorePlayer = function() {
-//   this.turnScore = 0;
-//   this.playerScore = 0;
-// }
 
 var whichTurn = function(player1, player2, turns) {
   if (turns % 2 === 0) {
@@ -42,14 +39,14 @@ die.prototype.roll = function() {
 
 die.prototype.diceRoll = function() {
   var newDiceRoll = [];
-  for (var i = 0; i < diceCount; i++) {
+  for (var i = 0; i < this.diceCount; i++) {
     newDiceRoll.push(this.roll());
   }
   return newDiceRoll;
 }
 
 die.prototype.resetScoreDie = function() {
-  diceCount = 6;
+  this.diceCount = 6;
   diceCountScore = 0;
 }
 
@@ -60,6 +57,20 @@ die.prototype.testRoll = function(roll) {
     }
   }
   return false;
+}
+
+die.prototype.addChosenDice = function(numbers) {
+  for (var i = 0; i < numbers.length; i++) {
+    if (numbers[i] === 1) {
+      diceCountScore += 100;
+    } else if (numbers[i] === 5) {
+      diceCountScore += 50;
+    }
+    this.diceCount += -1;
+  }
+  if (this.diceCount === 0) {
+    this.diceCount = 6;
+  }
 }
 
 $(function() {
@@ -83,7 +94,6 @@ $(function() {
 
 
       $('button#roll-button').click(function() {
-        $('#dice-output').empty();
         var roll = dice.diceRoll();
         if (dice.testRoll(roll) === false) {
           $('#dice-output').empty();
@@ -96,7 +106,7 @@ $(function() {
           $('button#dice-submit-button').show();
           var turnPlayer = whichTurn(player1, player2, turnCount);
           for (var i = 0; i < roll.length; i++) {
-            $('#dice-output').append('<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input" id="die-chack-' + i + '" type="checkbox" value="' + roll[i] + '">' + roll[i] + '</input></label></div>');
+            $('#dice-output').append('<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input" name="die-check" type="checkbox" value="' + roll[i] + '">' + roll[i] + '</input></label></div>');
           }
         }
       });
@@ -104,14 +114,28 @@ $(function() {
       alert('Please enter a unique name for each player!');
     }
 
+    $('form#dice-submit-form').submit(function(event) {
+      event.preventDefault();
+      var diceChosen = [];
+      $("input:checkbox[name=die-check]:checked").each(function() {
+        diceChosen.push(parseInt($(this).val()));
+      });
+      dice.addChosenDice(diceChosen);
+      $('.dice-count-score').html(diceCountScore);
+      $('#dice-output').empty();
+      $('button#roll-button').show();
+      $('button#dice-submit-button').hide();
+    });
+
     $('button#hold-button').click(function() {
       var turnPlayer = whichTurn(player1, player2, turnCount);
       turnPlayer.hold();
-      $('#player' + turnPlayer.playerNumber + ' .die-roll').html(0);
-      $('#player' + turnPlayer.playerNumber + ' .turnscore').html(turnPlayer.turnScore);
+      console.log(turnPlayer.playerScore);
+      console.log(diceCountScore);
+      $('#player' + turnPlayer.playerNumber + ' .playerscore').html(turnPlayer.playerScore);
 
       if (turnPlayer.checkForWin()) {
-        alert(turnPlayer.playerName + ' you won!' );
+        alert(turnPlayer.playerName + ' you won!');
         player1.resetScore();
         player2.resetScore();
         turnCount = 1;
@@ -123,9 +147,6 @@ $(function() {
         turnPlayer = whichTurn(player1, player2, turnCount);
         $('#turn-player-name').text(turnPlayer.playerName);
       }
-    });
-    $('.git').click(function() {
-      alert('cool');
     });
   });
 });
