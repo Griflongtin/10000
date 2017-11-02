@@ -28,10 +28,14 @@
 }
 
 #dice-output {
- /*margin: 10px;*/
+ margin: 10px;
 }
 
 #dice-submit-button {
+  display: none;
+}
+
+#new-dice-button {
   display: none;
 }
 

@@ -18,7 +18,7 @@ Player.prototype.hold = function() {
 
 Player.prototype.checkForWin = function() {
   var win = false;
-  if (this.playerScore >= 1000) {
+  if (this.playerScore >= 10000) {
     win = true;
   }
   return win;
@@ -98,6 +98,7 @@ $(function() {
         if (dice.testRoll(roll) === false) {
           $('#dice-output').empty();
           dice.resetScoreDie();
+          $('.dice-count-score').html(diceCountScore);
           turnCount++;
           turnPlayer = whichTurn(player1, player2, turnCount);
           $('#turn-player-name').text(turnPlayer.playerName);
@@ -130,8 +131,6 @@ $(function() {
     $('button#hold-button').click(function() {
       var turnPlayer = whichTurn(player1, player2, turnCount);
       turnPlayer.hold();
-      console.log(turnPlayer.playerScore);
-      console.log(diceCountScore);
       $('#player' + turnPlayer.playerNumber + ' .playerscore').html(turnPlayer.playerScore);
 
       if (turnPlayer.checkForWin()) {
@@ -146,7 +145,13 @@ $(function() {
         turnCount++;
         turnPlayer = whichTurn(player1, player2, turnCount);
         $('#turn-player-name').text(turnPlayer.playerName);
+        $('#new-dice-button').show();
       }
+    });
+    $('#new-dice-button').click(function() {
+      dice.resetScoreDie();
+      $('.dice-count-score').html(diceCountScore);
+      $('#new-dice-button').hide();
     });
   });
 });
